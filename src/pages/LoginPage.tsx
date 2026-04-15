@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { lovable } from '@/integrations/lovable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Shield, Mail } from 'lucide-react';
@@ -38,12 +39,11 @@ const LoginPage = () => {
   };
 
   const handleOAuth = async (provider: 'google' | 'apple') => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: `${window.location.origin}/home` },
+    const result = await lovable.auth.signInWithOAuth(provider, {
+      redirect_uri: `${window.location.origin}/home`,
     });
-    if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    if (result?.error) {
+      toast({ title: 'Error', description: String(result.error), variant: 'destructive' });
     }
   };
 
