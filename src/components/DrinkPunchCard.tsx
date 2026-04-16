@@ -32,7 +32,18 @@ const DrinkPunchCard = ({ drinks, onAddDrink, onReset, readonly = false }: Drink
         <SafetyIndicator drinkCount={totalDrinks} />
       </div>
 
-      <div className="glass rounded-xl p-4">
+      <div className="glass rounded-xl p-4 relative">
+        {!readonly && (
+          <Button
+            variant="secondary"
+            size="sm"
+            className="absolute top-3 left-3 h-7 px-2 text-xs gap-1"
+            onClick={onReset}
+          >
+            <RotateCcw className="h-3 w-3" />
+            Reset
+          </Button>
+        )}
         <div className="text-center mb-4">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Drink Card</p>
           <p className="text-3xl font-heading font-bold">{totalDrinks}</p>
@@ -63,26 +74,6 @@ const DrinkPunchCard = ({ drinks, onAddDrink, onReset, readonly = false }: Drink
         )}
       </div>
 
-      {!readonly && (
-        <div className="flex items-center gap-3 glass rounded-lg p-3">
-          <RotateCcw className="h-4 w-4 text-muted-foreground shrink-0" />
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="1"
-            defaultValue="0"
-            className="w-full accent-destructive"
-            onChange={(e) => {
-              if (e.target.value === '1') {
-                onReset();
-                e.target.value = '0';
-              }
-            }}
-          />
-          <span className="text-xs text-muted-foreground whitespace-nowrap">Slide to reset</span>
-        </div>
-      )}
     </div>
   );
 };
