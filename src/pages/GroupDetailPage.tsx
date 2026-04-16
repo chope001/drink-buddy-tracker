@@ -153,19 +153,19 @@ const GroupDetailPage = () => {
                   )}
                 >
                   <span className="text-lg font-heading font-bold w-8">{getRankEmoji(index)}</span>
-                  <div className="flex-1 text-left">
+                  <div className="flex-1 text-left min-w-0">
                     <p className="font-medium text-sm">{member.display_name}</p>
                     <div className="flex gap-1 mt-1 flex-wrap">
-                      {member.drinks.slice(0, 8).map((d, i) => {
+                      {member.drinks.map((d, i) => {
                         const Icon = drinkIconMap[d.type] || Beer;
                         return <Icon key={i} className={cn('h-3.5 w-3.5', drinkColorMap[d.type])} />;
                       })}
-                      {member.drinks.length > 8 && (
-                        <span className="text-xs text-muted-foreground">+{member.drinks.length - 8}</span>
-                      )}
                     </div>
                   </div>
-                  <SafetyIndicator drinkCount={member.total_drinks} />
+                  <div className="flex flex-col items-center shrink-0">
+                    <span className="text-2xl font-heading font-bold">{member.total_drinks}</span>
+                    <span className="text-[10px] text-muted-foreground">drinks</span>
+                  </div>
                 </button>
               );
             })}
