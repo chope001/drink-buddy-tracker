@@ -19,13 +19,17 @@ const LoginPage = () => {
     setLoading(true);
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { error, data } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-        toast({ title: 'Check your email', description: 'We sent you a confirmation link.' });
+        if (data.session) {
+          navigate('/home');
+        } else {
+          toast({ title: 'Check your email', description: 'We sent you a confirmation link.' });
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
