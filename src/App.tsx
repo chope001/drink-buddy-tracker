@@ -13,6 +13,7 @@ import GroupDetailPage from "./pages/GroupDetailPage";
 import GroupMyDrinksPage from "./pages/GroupMyDrinksPage";
 import MemberDrinksPage from "./pages/MemberDrinksPage";
 import AccountPage from "./pages/AccountPage";
+import InvitePage from "./pages/InvitePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+            <Route path="/invite/:token" element={<InvitePage />} />
             <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
             <Route path="/track" element={<ProtectedRoute><TrackDrinksPage /></ProtectedRoute>} />
             <Route path="/groups" element={<ProtectedRoute><GroupsPage /></ProtectedRoute>} />
