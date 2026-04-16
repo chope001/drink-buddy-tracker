@@ -60,6 +60,7 @@ export type Database = {
           id: string
           invited_by: string
           status: string
+          token: string
         }
         Insert: {
           contact: string
@@ -68,6 +69,7 @@ export type Database = {
           id?: string
           invited_by: string
           status?: string
+          token?: string
         }
         Update: {
           contact?: string
@@ -76,6 +78,7 @@ export type Database = {
           id?: string
           invited_by?: string
           status?: string
+          token?: string
         }
         Relationships: [
           {
@@ -169,10 +172,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_invite_by_token: {
+        Args: { _token: string }
+        Returns: {
+          group_id: string
+          group_name: string
+          status: string
+        }[]
+      }
       is_group_member: {
         Args: { _group_id: string; _user_id: string }
         Returns: boolean
       }
+      redeem_invite: { Args: { _token: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never

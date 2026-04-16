@@ -38,6 +38,13 @@ const GroupDetailPage = () => {
 
   useEffect(() => {
     if (user && groupId) loadGroupData();
+    const onFocus = () => { if (user && groupId) loadGroupData(); };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onFocus);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onFocus);
+    };
   }, [user, groupId]);
 
   const loadGroupData = async () => {
@@ -112,23 +119,11 @@ const GroupDetailPage = () => {
           </Button>
         </div>
 
-        <div className="flex items-center gap-3 glass rounded-lg p-3">
-          <RotateCcw className="h-4 w-4 text-muted-foreground shrink-0" />
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="1"
-            defaultValue="0"
-            className="w-full accent-destructive"
-            onChange={(e) => {
-              if (e.target.value === '1') {
-                handleResetAll();
-                e.target.value = '0';
-              }
-            }}
-          />
-          <span className="text-xs text-muted-foreground whitespace-nowrap">Reset all</span>
+        <div className="flex justify-start">
+          <Button variant="secondary" size="sm" onClick={handleResetAll} className="gap-1">
+            <RotateCcw className="h-3.5 w-3.5" />
+            Reset All
+          </Button>
         </div>
 
         {loading ? (
@@ -137,7 +132,7 @@ const GroupDetailPage = () => {
           <div className="space-y-2">
             <div className="flex items-center gap-2 px-1">
               <Trophy className="h-4 w-4 text-accent" />
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Leaderboard</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Tracking</p>
             </div>
 
             {members.map((member, index) => {
