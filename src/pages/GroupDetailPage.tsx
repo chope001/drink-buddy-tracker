@@ -4,10 +4,20 @@ import AppHeader from '@/components/AppHeader';
 import SafetyIndicator from '@/components/SafetyIndicator';
 import { getSafetyLevel } from '@/components/SafetyIndicator';
 import { Button } from '@/components/ui/button';
-import { Beer, Wine, Martini, Trophy, RotateCcw } from 'lucide-react';
+import { Beer, Wine, Martini, Trophy, RotateCcw, UserPlus, Copy, Check } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
 interface MemberDrinks {
   user_id: string;
