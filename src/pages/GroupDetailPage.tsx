@@ -97,12 +97,7 @@ const GroupDetailPage = () => {
     loadGroupData();
   };
 
-  const getRankEmoji = (index: number) => {
-    if (index === 0) return '🥇';
-    if (index === 1) return '🥈';
-    if (index === 2) return '🥉';
-    return `#${index + 1}`;
-  };
+  const getRankLabel = (index: number) => `#${index + 1}`;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -152,7 +147,7 @@ const GroupDetailPage = () => {
                     borderColor
                   )}
                 >
-                  <span className="text-lg font-heading font-bold w-8">{getRankEmoji(index)}</span>
+                  <span className="text-lg font-heading font-bold w-8 text-muted-foreground">{getRankLabel(index)}</span>
                   <div className="flex-1 text-left min-w-0">
                     <p className="font-medium text-sm">{member.display_name}</p>
                     <div className="flex gap-1 mt-1 flex-wrap">
