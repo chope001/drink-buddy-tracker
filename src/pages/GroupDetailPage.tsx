@@ -4,10 +4,20 @@ import AppHeader from '@/components/AppHeader';
 import SafetyIndicator from '@/components/SafetyIndicator';
 import { getSafetyLevel } from '@/components/SafetyIndicator';
 import { Button } from '@/components/ui/button';
-import { Beer, Wine, Martini, Trophy, RotateCcw } from 'lucide-react';
+import { Beer, Wine, Martini, Trophy, RotateCcw, UserPlus, Copy, Check } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
 interface MemberDrinks {
   user_id: string;
@@ -32,9 +42,14 @@ const GroupDetailPage = () => {
   const { groupId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [groupName, setGroupName] = useState('');
   const [members, setMembers] = useState<MemberDrinks[]>([]);
   const [loading, setLoading] = useState(true);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
+  const [inviteLoading, setInviteLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (user && groupId) loadGroupData();
@@ -97,6 +112,51 @@ const GroupDetailPage = () => {
     loadGroupData();
   };
 
+  const handleGetInviteLink = async () => {
+    setInviteOpen(true);
+    if (inviteUrl) return;
+    setInviteLoading(true);
+    try {
+      // Reuse most recent invite by this user for this group, otherwise create one
+      const { data: existing } = await supabase
+        .from('group_invites')
+        .select('token')
+        .eq('group_id', groupId!)
+        .eq('invited_by', user!.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      let token = (existing as any)?.token;
+      if (!token) {
+        const { data: created, error } = await supabase
+          .from('group_invites')
+          .insert({
+            group_id: groupId!,
+            invited_by: user!.id,
+            contact: 'shareable-link',
+          })
+          .select('token')
+          .single();
+        if (error) throw error;
+        token = (created as any).token;
+      }
+      setInviteUrl(`${window.location.origin}/invite/${token}`);
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message, variant: 'destructive' });
+      setInviteOpen(false);
+    } finally {
+      setInviteLoading(false);
+    }
+  };
+
+  const copyInvite = async () => {
+    if (!inviteUrl) return;
+    await navigator.clipboard.writeText(inviteUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <AppHeader title={groupName || 'Group'} />
@@ -112,10 +172,14 @@ const GroupDetailPage = () => {
           </Button>
         </div>
 
-        <div className="flex justify-start">
+        <div className="flex justify-start gap-2">
           <Button variant="secondary" size="sm" onClick={handleResetAll} className="gap-1">
             <RotateCcw className="h-3.5 w-3.5" />
             Reset All
+          </Button>
+          <Button variant="secondary" size="sm" onClick={handleGetInviteLink} className="gap-1">
+            <UserPlus className="h-3.5 w-3.5" />
+            Invite Link
           </Button>
         </div>
 
@@ -164,6 +228,30 @@ const GroupDetailPage = () => {
           </div>
         )}
       </div>
+
+      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Invite friends to {groupName}</DialogTitle>
+            <DialogDescription>
+              Copy this link and send it to anyone you want to add. When they open it they'll be able to sign up or sign in and will be auto-added to the group.
+            </DialogDescription>
+          </DialogHeader>
+          {inviteLoading ? (
+            <p className="text-sm text-muted-foreground">Generating link...</p>
+          ) : (
+            <div className="flex gap-2">
+              <Input readOnly value={inviteUrl ?? ''} className="h-10 text-xs bg-secondary border-border" />
+              <Button size="sm" variant="secondary" onClick={copyInvite} className="shrink-0">
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              </Button>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="hero" onClick={() => setInviteOpen(false)}>Done</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
