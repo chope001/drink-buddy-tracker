@@ -112,6 +112,51 @@ const GroupDetailPage = () => {
     loadGroupData();
   };
 
+  const handleGetInviteLink = async () => {
+    setInviteOpen(true);
+    if (inviteUrl) return;
+    setInviteLoading(true);
+    try {
+      // Reuse most recent invite by this user for this group, otherwise create one
+      const { data: existing } = await supabase
+        .from('group_invites')
+        .select('token')
+        .eq('group_id', groupId!)
+        .eq('invited_by', user!.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      let token = (existing as any)?.token;
+      if (!token) {
+        const { data: created, error } = await supabase
+          .from('group_invites')
+          .insert({
+            group_id: groupId!,
+            invited_by: user!.id,
+            contact: 'shareable-link',
+          })
+          .select('token')
+          .single();
+        if (error) throw error;
+        token = (created as any).token;
+      }
+      setInviteUrl(`${window.location.origin}/invite/${token}`);
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message, variant: 'destructive' });
+      setInviteOpen(false);
+    } finally {
+      setInviteLoading(false);
+    }
+  };
+
+  const copyInvite = async () => {
+    if (!inviteUrl) return;
+    await navigator.clipboard.writeText(inviteUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <AppHeader title={groupName || 'Group'} />
