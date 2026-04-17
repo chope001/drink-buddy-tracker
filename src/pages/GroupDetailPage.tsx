@@ -42,9 +42,14 @@ const GroupDetailPage = () => {
   const { groupId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [groupName, setGroupName] = useState('');
   const [members, setMembers] = useState<MemberDrinks[]>([]);
   const [loading, setLoading] = useState(true);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
+  const [inviteLoading, setInviteLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (user && groupId) loadGroupData();
