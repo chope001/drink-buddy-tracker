@@ -228,6 +228,30 @@ const GroupDetailPage = () => {
           </div>
         )}
       </div>
+
+      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Invite friends to {groupName}</DialogTitle>
+            <DialogDescription>
+              Copy this link and send it to anyone you want to add. When they open it they'll be able to sign up or sign in and will be auto-added to the group.
+            </DialogDescription>
+          </DialogHeader>
+          {inviteLoading ? (
+            <p className="text-sm text-muted-foreground">Generating link...</p>
+          ) : (
+            <div className="flex gap-2">
+              <Input readOnly value={inviteUrl ?? ''} className="h-10 text-xs bg-secondary border-border" />
+              <Button size="sm" variant="secondary" onClick={copyInvite} className="shrink-0">
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              </Button>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="hero" onClick={() => setInviteOpen(false)}>Done</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
