@@ -97,8 +97,6 @@ const GroupDetailPage = () => {
     loadGroupData();
   };
 
-  const getRankLabel = (index: number) => `#${index + 1}`;
-
   return (
     <div className="min-h-screen flex flex-col">
       <AppHeader title={groupName || 'Group'} />
@@ -147,7 +145,6 @@ const GroupDetailPage = () => {
                     borderColor
                   )}
                 >
-                  <span className="text-lg font-heading font-bold w-8 text-muted-foreground">{getRankLabel(index)}</span>
                   <div className="flex-1 text-left min-w-0">
                     <p className="font-medium text-sm">{member.display_name}</p>
                     <div className="flex gap-1 mt-1 flex-wrap">
