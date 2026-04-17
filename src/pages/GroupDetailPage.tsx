@@ -172,10 +172,14 @@ const GroupDetailPage = () => {
           </Button>
         </div>
 
-        <div className="flex justify-start">
+        <div className="flex justify-start gap-2">
           <Button variant="secondary" size="sm" onClick={handleResetAll} className="gap-1">
             <RotateCcw className="h-3.5 w-3.5" />
             Reset All
+          </Button>
+          <Button variant="secondary" size="sm" onClick={handleGetInviteLink} className="gap-1">
+            <UserPlus className="h-3.5 w-3.5" />
+            Invite Link
           </Button>
         </div>
 
