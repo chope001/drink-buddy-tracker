@@ -1,10 +1,34 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppHeader from '@/components/AppHeader';
 import { Button } from '@/components/ui/button';
 import { Beer, Users, Shield } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/lib/supabase';
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [firstName, setFirstName] = useState('');
+
+  useEffect(() => {
+    if (!user) return;
+    const load = async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', user.id)
+        .maybeSingle();
+      const name =
+        (data as any)?.display_name ||
+        (user.user_metadata as any)?.full_name ||
+        (user.user_metadata as any)?.name ||
+        user.email?.split('@')[0] ||
+        '';
+      setFirstName(String(name).trim().split(/\s+/)[0] || '');
+    };
+    load();
+  }, [user]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -14,7 +38,9 @@ const HomePage = () => {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 mb-2">
             <Shield className="h-10 w-10 text-primary" />
           </div>
-          <h2 className="text-2xl font-heading font-bold">Welcome Back</h2>
+          <h2 className="text-2xl font-heading font-bold">
+            Welcome Back{firstName ? ` ${firstName}` : ''}
+          </h2>
           <p className="text-sm text-muted-foreground">Track responsibly. Stay safe.</p>
         </div>
 
