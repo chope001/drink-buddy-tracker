@@ -36,7 +36,7 @@ const drinkColors = {
 const drinkLabels = {
   beer: 'Beer',
   wine: 'Wine',
-  shot: 'Tequila',
+  shot: 'Liquor',
   empty: '',
 };
 
