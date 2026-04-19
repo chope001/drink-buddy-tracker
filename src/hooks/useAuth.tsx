@@ -22,16 +22,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const redeemPendingInvite = async (currentUser: User | null) => {
+      if (!currentUser) return;
+      const token = localStorage.getItem('pendingInviteToken');
+      if (!token) return;
+      // Clear immediately to prevent re-redemption loops
+      localStorage.removeItem('pendingInviteToken');
+      const { data, error } = await supabase.rpc('redeem_invite', { _token: token });
+      if (!error && data) {
+        // Defer navigation so React state settles first
+        setTimeout(() => {
+          window.location.assign(`/groups/${data}`);
+        }, 0);
+      }
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      if (event === 'SIGNED_IN') {
+        redeemPendingInvite(session?.user ?? null);
+      }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      // Also try on initial load (handles OAuth redirect-back where SIGNED_IN may have already fired)
+      redeemPendingInvite(session?.user ?? null);
     });
 
     return () => subscription.unsubscribe();
