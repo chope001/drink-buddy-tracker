@@ -203,7 +203,13 @@ const GroupDetailPage = () => {
               return (
                 <button
                   key={member.user_id}
-                  onClick={() => navigate(`/groups/${groupId}/member/${member.user_id}`)}
+                  onClick={() =>
+                    navigate(
+                      member.user_id === user?.id
+                        ? `/groups/${groupId}/my-drinks`
+                        : `/groups/${groupId}/member/${member.user_id}`
+                    )
+                  }
                   className={cn(
                     'w-full glass rounded-xl p-4 flex items-center gap-3 hover:border-primary/50 transition-all border-l-4',
                     borderColor
