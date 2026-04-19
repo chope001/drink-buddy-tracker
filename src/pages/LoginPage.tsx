@@ -15,18 +15,6 @@ const LoginPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const redeemPendingInvite = async () => {
-    const token = localStorage.getItem('pendingInviteToken');
-    if (!token) return null;
-    localStorage.removeItem('pendingInviteToken');
-    const { data, error } = await supabase.rpc('redeem_invite', { _token: token });
-    if (error) {
-      toast({ title: 'Could not join group', description: error.message, variant: 'destructive' });
-      return null;
-    }
-    return data as string;
-  };
-
   const handleEmailLogin = async () => {
     setLoading(true);
     try {
@@ -38,16 +26,16 @@ const LoginPage = () => {
         });
         if (error) throw error;
         if (data.session) {
-          const groupId = await redeemPendingInvite();
-          navigate(groupId ? `/groups/${groupId}` : '/home');
+          // useAuth will detect SIGNED_IN and auto-redeem any pending invite
+          navigate('/home');
         } else {
           toast({ title: 'Check your email', description: 'We sent you a confirmation link.' });
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        const groupId = await redeemPendingInvite();
-        navigate(groupId ? `/groups/${groupId}` : '/home');
+        // useAuth will detect SIGNED_IN and auto-redeem any pending invite
+        navigate('/home');
       }
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
@@ -57,6 +45,7 @@ const LoginPage = () => {
   };
 
   const handleOAuth = async (provider: 'google' | 'apple') => {
+    // Redirect back to root — useAuth picks up the SIGNED_IN event and redeems any pending invite
     const result = await lovable.auth.signInWithOAuth(provider, {
       redirect_uri: `${window.location.origin}/home`,
     });
