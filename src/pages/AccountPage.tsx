@@ -20,31 +20,48 @@ const AccountPage = () => {
   }, [user]);
 
   const loadProfile = async () => {
-    const { data } = await supabase
+    const { data: profile } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user!.id)
       .single();
-    
-    if (data) {
-      setUsername(data.username || '');
-      setDisplayName(data.display_name || '');
-      setPhone(data.phone || '');
+
+    if (profile) {
+      setUsername(profile.username || '');
+      setDisplayName(profile.display_name || '');
+    }
+
+    const { data: priv } = await supabase
+      .from('private_profiles')
+      .select('phone')
+      .eq('id', user!.id)
+      .maybeSingle();
+
+    if (priv) {
+      setPhone(priv.phone || '');
     }
   };
 
   const handleSave = async () => {
     setLoading(true);
-    const { error } = await supabase
+    const { error: profileError } = await supabase
       .from('profiles')
-      .upsert({
-        id: user!.id,
+      .update({
         username,
         display_name: displayName,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', user!.id);
+
+    const { error: phoneError } = await supabase
+      .from('private_profiles')
+      .upsert({
+        id: user!.id,
         phone,
         updated_at: new Date().toISOString(),
       });
-    
+
+    const error = profileError || phoneError;
     if (error) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
     } else {
