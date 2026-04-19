@@ -17,7 +17,10 @@ const AppHeader = ({ title }: { title?: string }) => {
   const showBack = location.pathname !== '/home';
 
   return (
-    <header className="flex items-center justify-between px-4 py-3 glass sticky top-0 z-50">
+    <header
+      className="flex items-center justify-between px-4 py-3 glass sticky top-0 z-50"
+      style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.75rem)' }}
+    >
       <div className="flex items-center gap-2">
         {showBack && (
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
