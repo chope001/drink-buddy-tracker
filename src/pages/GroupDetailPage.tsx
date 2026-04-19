@@ -161,29 +161,21 @@ const GroupDetailPage = () => {
     <div className="min-h-screen flex flex-col">
       <AppHeader title={groupName || 'Group'} />
       <div className="flex-1 px-4 py-6 max-w-md mx-auto w-full space-y-4">
-        <Button
-          variant="hero"
-          className="w-full h-12"
-          onClick={handleGetInviteLink}
-        >
-          <UserPlus className="h-4 w-4 mr-2" />
-          Invite Friends
-        </Button>
-
         <div className="flex gap-2">
           <Button
-            variant="secondary"
-            className="flex-1"
-            onClick={() => navigate(`/groups/${groupId}/my-drinks`)}
+            variant="hero"
+            className="flex-1 h-12"
+            onClick={handleGetInviteLink}
           >
-            <Beer className="h-4 w-4 mr-2" />
-            My Drinks
+            <UserPlus className="h-4 w-4 mr-2" />
+            Invite Friends
           </Button>
-        </div>
-
-        <div className="flex justify-start gap-2">
-          <Button variant="secondary" size="sm" onClick={handleResetAll} className="gap-1">
-            <RotateCcw className="h-3.5 w-3.5" />
+          <Button
+            variant="secondary"
+            className="flex-1 h-12"
+            onClick={handleResetAll}
+          >
+            <RotateCcw className="h-4 w-4 mr-2" />
             Reset All
           </Button>
         </div>
