@@ -113,6 +113,7 @@ const DrinkCard = ({ index, type, multiplier, onSelect, readonly = false }: Drin
               );
             })}
           </div>
+          <p className="text-sm text-center text-muted-foreground">Select Drink Strength</p>
           <div className="flex gap-2 justify-center">
             {[1, 2, 3, 4].map((m) => (
               <button
