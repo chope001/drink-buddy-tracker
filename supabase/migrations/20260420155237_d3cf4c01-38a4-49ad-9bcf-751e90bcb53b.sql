@@ -1,0 +1,4 @@
+-- Enforce unique usernames (case-insensitive) so duplicates can be detected reliably
+CREATE UNIQUE INDEX IF NOT EXISTS profiles_username_unique_ci
+  ON public.profiles (lower(username))
+  WHERE username IS NOT NULL;
