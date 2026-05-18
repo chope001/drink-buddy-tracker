@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { lovable } from '@/integrations/lovable';
+import { isNative, signInWithOAuthNative } from '@/lib/nativeAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Shield, Mail } from 'lucide-react';
@@ -45,12 +46,21 @@ const LoginPage = () => {
   };
 
   const handleOAuth = async (provider: 'google' | 'apple') => {
-    // Redirect back to root — useAuth picks up the SIGNED_IN event and redeems any pending invite
-    const result = await lovable.auth.signInWithOAuth(provider, {
-      redirect_uri: `${window.location.origin}/home`,
-    });
-    if (result?.error) {
-      toast({ title: 'Error', description: String(result.error), variant: 'destructive' });
+    try {
+      if (isNative()) {
+        // iOS/Android: bounce through the web bridge + safesip:// deep link
+        await signInWithOAuthNative(provider);
+        return;
+      }
+      // Web: standard Lovable managed OAuth redirect
+      const result = await lovable.auth.signInWithOAuth(provider, {
+        redirect_uri: `${window.location.origin}/home`,
+      });
+      if (result?.error) {
+        toast({ title: 'Error', description: String(result.error), variant: 'destructive' });
+      }
+    } catch (err: any) {
+      toast({ title: 'Error', description: err?.message ?? String(err), variant: 'destructive' });
     }
   };
 
