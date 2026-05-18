@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { lovable } from '@/integrations/lovable';
-import { isNative, signInWithOAuthNative } from '@/lib/nativeAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Shield, Mail } from 'lucide-react';
