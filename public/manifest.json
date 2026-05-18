@@ -1,0 +1,19 @@
+{
+  "name": "SafeSip",
+  "short_name": "SafeSip",
+  "description": "Track your drinks responsibly. Solo or with friends.",
+  "start_url": "/home",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0f1a",
+  "theme_color": "#0b0f1a",
+  "icons": [
+    {
+      "src": "/app-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
