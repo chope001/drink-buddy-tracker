@@ -14,6 +14,7 @@ import GroupMyDrinksPage from "./pages/GroupMyDrinksPage";
 import MemberDrinksPage from "./pages/MemberDrinksPage";
 import AccountPage from "./pages/AccountPage";
 import InvitePage from "./pages/InvitePage";
+import MobileAuthBridge from "./pages/MobileAuthBridge";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
             <Route path="/invite/:token" element={<InvitePage />} />
+            <Route path="/mobile-auth-bridge" element={<MobileAuthBridge />} />
             <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
             <Route path="/track" element={<ProtectedRoute><TrackDrinksPage /></ProtectedRoute>} />
             <Route path="/groups" element={<ProtectedRoute><GroupsPage /></ProtectedRoute>} />
