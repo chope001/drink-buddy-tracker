@@ -46,12 +46,6 @@ const LoginPage = () => {
 
   const handleOAuth = async (provider: 'google' | 'apple') => {
     try {
-      if (isNative()) {
-        // iOS/Android: bounce through the web bridge + safesip:// deep link
-        await signInWithOAuthNative(provider);
-        return;
-      }
-      // Web: standard Lovable managed OAuth redirect
       const result = await lovable.auth.signInWithOAuth(provider, {
         redirect_uri: `${window.location.origin}/home`,
       });
